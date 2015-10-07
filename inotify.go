@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -277,10 +276,14 @@ func (e *Event) ignoreLinux(mask uint32) bool {
 	// *Note*: this was put in place because it was seen that a MODIFY
 	// event was sent after the DELETE. This ignores that MODIFY and
 	// assumes a DELETE will come or has come if the file doesn't exist.
-	if !(e.Op&Remove == Remove || e.Op&Rename == Rename) {
-		_, statErr := os.Lstat(e.Name)
-		return os.IsNotExist(statErr)
-	}
+	/*
+		    // disabled to make it possible to close the current using file on IN_ATTRIB event before DELETE_SELF event
+			if !(e.Op&Remove == Remove || e.Op&Rename == Rename) {
+				_, statErr := os.Lstat(e.Name)
+				return os.IsNotExist(statErr)
+			}
+	*/
+
 	return false
 }
 
